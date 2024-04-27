@@ -24,10 +24,10 @@ public class SensorsValidator implements Validator {
 
     @Override
     public void validate(Object target, Errors errors) {
-        SensorDTO sensor = (SensorDTO) target;
+        Sensor sensor = (Sensor) target;
 
         if (sensorsService.findOne(sensor.getName()).isPresent())
-            errors.rejectValue("name", "", "sensor with this name exist");
+            errors.rejectValue("name", "sensor with this name exist");
 
     }
 }

@@ -24,15 +24,17 @@ public class MeasurementsService {
 
     @Transactional
     public void save(Measurement measurement) {
-        Sensor sensor = sensorsService.findOne(measurement.getSensor().getName()).get();
-
-        measurement.setTime(new Date());
-        measurement.setSensor(sensor);
+        enrichMeasurement(measurement);
         measurementsRepository.save(measurement);
     }
 
     public List<Measurement> getALl() {
         return measurementsRepository.findAll();
+    }
+
+    private void enrichMeasurement(Measurement measurement) {
+        measurement.setTime(new Date());
+        measurement.setSensor(sensorsService.findOne(measurement.getSensor().getName()).get());
     }
 
 }

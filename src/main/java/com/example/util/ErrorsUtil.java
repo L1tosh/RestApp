@@ -3,7 +3,7 @@ package com.example.util;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 
-public class TextErrorGenerator {
+public class ErrorsUtil {
     static public String getErrorMessage(BindingResult bindingResult) {
         StringBuilder errorMsg = new StringBuilder();
 

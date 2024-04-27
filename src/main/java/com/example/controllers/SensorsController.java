@@ -4,7 +4,6 @@ import com.example.dto.SensorDTO;
 import com.example.model.Sensor;
 import com.example.sevices.SensorsService;
 import com.example.util.ResponseError;
-import com.example.util.TextErrorGenerator;
 import com.example.util.exceptions.SensorNotCreateException;
 import com.example.util.validators.SensorsValidator;
 import jakarta.validation.Valid;
@@ -14,6 +13,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+
+import static com.example.util.ErrorsUtil.getErrorMessage;
 
 @RestController
 @RequestMapping("/sensors")
@@ -32,22 +33,17 @@ public class SensorsController {
 
     @PostMapping("/registration")
     public ResponseEntity<HttpStatus> registration(@RequestBody @Valid SensorDTO sensorDTO, BindingResult bindingResult) {
-        sensorsValidator.validate(sensorDTO, bindingResult);
+        Sensor sensor = convertToSensor(sensorDTO);
+
+        sensorsValidator.validate(sensor, bindingResult);
 
         if (bindingResult.hasErrors())
-            throw new SensorNotCreateException(TextErrorGenerator.getErrorMessage(bindingResult));
+            throw new SensorNotCreateException(getErrorMessage(bindingResult));
 
-        sensorsService.save(convertToSensor(sensorDTO));
-
-        return new ResponseEntity<>(HttpStatus.OK);
-    }
-
-    public ResponseEntity<HttpStatus> add() {
-
+        sensorsService.save(sensor);
 
         return new ResponseEntity<>(HttpStatus.OK);
     }
-
 
     private Sensor convertToSensor(SensorDTO sensorDTO) {
         return modelMapper.map(sensorDTO, Sensor.class);

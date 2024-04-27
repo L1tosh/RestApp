@@ -4,8 +4,8 @@ import com.example.dao.MeasurementsDAO;
 import com.example.dto.MeasurementDTO;
 import com.example.model.Measurement;
 import com.example.sevices.MeasurementsService;
+import com.example.util.MeasurementsResponse;
 import com.example.util.ResponseError;
-import com.example.util.TextErrorGenerator;
 import com.example.util.exceptions.MeasurementNotCreateException;
 import com.example.util.exceptions.MeasurementNotFoundException;
 import com.example.util.validators.MeasurementsValidator;
@@ -19,6 +19,9 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
+
+import static com.example.util.ErrorsUtil.*;
 
 @RestController
 @RequestMapping("/measurements")
@@ -38,13 +41,10 @@ public class MeasurementsController {
     }
 
     @GetMapping
-    public ResponseEntity<List<Measurement>> all() {
-        List<Measurement> measurements = measurementsService.getALl();
-
-        if (measurements.isEmpty())
-            throw new MeasurementNotFoundException("there is no any measurement");
-
-        return new ResponseEntity<>(measurements, HttpStatus.OK);
+    public MeasurementsResponse all() {
+        return new MeasurementsResponse(measurementsService.getALl().stream()
+                .map(this::convertToMeasurementDTO)
+                .collect(Collectors.toList()));
     }
 
     @GetMapping("/rainyDaysCount")
@@ -57,7 +57,7 @@ public class MeasurementsController {
         measurementsValidator.validate(measurementDTO, bindingResult);
 
         if (bindingResult.hasErrors())
-            throw new MeasurementNotCreateException(TextErrorGenerator.getErrorMessage(bindingResult));
+            throw new MeasurementNotCreateException(getErrorMessage(bindingResult));
 
         measurementsService.save(convertToMeasurement(measurementDTO));
 
@@ -66,6 +66,10 @@ public class MeasurementsController {
 
     private Measurement convertToMeasurement(MeasurementDTO measurementDTO) {
         return modelMapper.map(measurementDTO, Measurement.class);
+    }
+
+    private MeasurementDTO convertToMeasurementDTO(Measurement measurement) {
+        return modelMapper.map(measurement, MeasurementDTO.class);
     }
 
 

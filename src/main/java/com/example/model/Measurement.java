@@ -20,11 +20,11 @@ public class Measurement {
     @Max(value = 100, message = "value can`t be more then 100")
     @Min(value = -100, message = "value can`t be less then 100")
     @Column(name = "value")
-    private double value;
+    private Double value;
 
     @NotNull(message = "raining can`t be empty")
     @Column(name = "raining")
-    private boolean raining;
+    private Boolean raining;
 
     @ManyToOne
     @JoinColumn(name = "sensor_id")
@@ -45,19 +45,19 @@ public class Measurement {
         this.id = id;
     }
 
-    public double getValue() {
+    public Double getValue() {
         return value;
     }
 
-    public void setValue(double value) {
+    public void setValue(Double value) {
         this.value = value;
     }
 
-    public boolean isRaining() {
+    public Boolean isRaining() {
         return raining;
     }
 
-    public void setRaining(boolean raining) {
+    public void setRaining(Boolean raining) {
         this.raining = raining;
     }
 
